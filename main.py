@@ -62,7 +62,7 @@ if user_input:
         category= result["category"]
         month= result["month"].capitalize()
 
-        if category == " Rundfunkt" :
+        if category == "Rundfunkt" :
          
          try:
             cell=sheet_rundfunkt.find(name)
