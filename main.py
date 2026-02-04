@@ -86,9 +86,8 @@ if user_input:
                st.stop()
     
             sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
-            
-            st.success(f"Updated Rundfunk Table for {name}!")
             st.rerun()
+            st.success(f"Updated Rundfunk Table for {name}!")
           
          except :
             st.error(f"Hata {name} could not found")
@@ -99,9 +98,9 @@ if user_input:
            try: 
             cell=sheet_vodafone.find(month,in_column=1)
             sheet_vodafone.update_cell(cell.row,2,"Ödendi")
-            
-            st.success(f"Updated Vodafone Table for {month}!")
             st.rerun()
+            st.success(f"Updated Vodafone Table for {month}!")
+  
            except :
               st.error(f"Hata:{month} could not found")
               st.stop()
