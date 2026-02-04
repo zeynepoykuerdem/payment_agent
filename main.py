@@ -90,7 +90,7 @@ if user_input:
             st.stop()
 
         elif "Vodafone" in category :
-           month= result["month"].capitalize()
+           month= result["AY"].capitalize()
            try: 
             cell=sheet_vodafone.find(month)
             sheet_vodafone.update_cell(cell.row,2,"Ödendi")
