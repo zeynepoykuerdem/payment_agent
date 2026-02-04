@@ -85,7 +85,7 @@ if user_input:
                st.info(f"{name} is already marked as Ödendi")
                st.stop()
     
-            sheet_rundfunkt.update_cell(cell_status,2,"Ödendi")
+            sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
             
             st.success(f"Updated Rundfunk Table for {name}!")
             st.rerun()
