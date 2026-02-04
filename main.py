@@ -6,7 +6,6 @@ import pandas as pd
 import datetime as dt
 import openai as ai
 import json
-import os
 import gspread
 from google.oauth2.service_account import Credentials
 
@@ -18,18 +17,18 @@ client = gspread.authorize(creds)
 sheet_rundfunkt= client.open("rundfunkt_payments").sheet1
 sheet_vodafone= client.open("vodafone_payments").sheet1
 
-client_ai= ai.Client(api_key=os.getenv("OPENAPI_KEY"))
+client_ai= ai.OpenAI(api_key=st.secrets["OPENAPI_KEY"])
 
 def talk_to_agent(chat_input):
     system_prompt= """ You are a helpful payment management assistant. 
-             Extract the person's name, paymment category (  Rundfunkt, Vodafone).
+             Extract the person's name, paymment category (Rundfunk, Vodafone).
              The Rundfunkt fee is always 2.70 euros per person.(Nihal, Li, Mehru, Alexia,Yazan. and Lennart)
              Vodafone fee is 64.90 euros per month.(For WIFI, this is only related to Frau Horlacher).
              Return JSON: {"name": "string", "category": "Rundfunk/Vodafone", 
              "month":"string,"valid": true} """
     response= client_ai.chat.completions.create(
         model="gpt-4o",
-        message=[
+        messages=[
             {"role":"system","content":system_prompt},
             {"role":"user","content":chat_input}
         ,
@@ -62,23 +61,25 @@ if user_input:
         category= result["category"]
         month= result["month"].capitalize()
 
-        if category == "Rundfunkt" :
+        if "Rundfunk" in category :
          
          try:
             cell=sheet_rundfunkt.find(name)
             sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
             
-            st.success(f"Updated for {name}!")
+            st.success(f"Updated Rundfunk Table for {name}!")
+            st.rerun()
         
          except :
             st.error(f"Hata {name} could not found")
 
-        else :
+        elif "Vodafone" in category :
            try: 
             cell=sheet_vodafone.find(month)
             sheet_vodafone.update_cell(cell.row,2,"Ödendi")
             
-            st.success(f"Updated for {month}!")
+            st.success(f"Updated Vodafone Table for {month}!")
+            st.rerun()
            except :
               st.error(f"Hata:{month} could not found")
               
@@ -88,7 +89,7 @@ if user_input:
         
 
 else:
-    st.warning("I could not figure it out whic fiule to update")
+    st.warning("I could not figure it out which table to update")
         
 
 
