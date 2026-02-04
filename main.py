@@ -26,7 +26,7 @@ def talk_to_agent(chat_input):
              The Rundfunkt fee is always 2.70 euros per person.(Nihal, Li, Mehru, Alexia,Yazan. and Lennart)
              Vodafone fee is 64.90 euros per month.(For WIFI, this is only related to Frau Horlacher).
              Return JSON: {"name": "string", "category": "Rundfunk/Vodafone", 
-             "month":"string,"valid": true} """
+             "month":"string","valid": true} """
     response= client_ai.models.genarate_content(system_prompt
     )
     text_response= response.text.replace('```json', '').replace('```', '').strip()
