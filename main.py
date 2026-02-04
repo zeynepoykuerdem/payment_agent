@@ -79,7 +79,7 @@ if user_input:
         if "Rundfunk" in category :
          
          try:
-            cell=sheet_rundfunkt.find(name)
+            cell=sheet_rundfunkt.find(name,in_column=1)
             sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
             
             st.success(f"Updated Rundfunk Table for {name}!")
@@ -90,9 +90,9 @@ if user_input:
             st.stop()
 
         elif "Vodafone" in category :
-           month= result["AY"].capitalize()
+           month= result["month"].capitalize()
            try: 
-            cell=sheet_vodafone.find(month)
+            cell=sheet_vodafone.find(month,in_column=1)
             sheet_vodafone.update_cell(cell.row,2,"Ödendi")
             
             st.success(f"Updated Vodafone Table for {month}!")
