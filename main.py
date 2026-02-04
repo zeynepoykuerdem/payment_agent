@@ -86,7 +86,7 @@ if user_input:
                st.stop()
     
             sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
-            st.rerun()
+            
             st.success(f"Updated Rundfunk Table for {name}!")
           
          except :
@@ -97,8 +97,11 @@ if user_input:
            month= result["month"].capitalize()
            try: 
             cell=sheet_vodafone.find(month,in_column=1)
+            cell_status= sheet_vodafone.cell(cell.row,2).value
+            if cell_status == "Ödendi":
+               st.info(f"{month} is already marked as Ödendi")
+               st.stop()
             sheet_vodafone.update_cell(cell.row,2,"Ödendi")
-            st.rerun()
             st.success(f"Updated Vodafone Table for {month}!")
   
            except :
