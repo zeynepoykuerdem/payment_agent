@@ -17,7 +17,7 @@ client = gspread.authorize(creds)
 sheet_rundfunkt= client.open("rundfunkt_payments").sheet1
 sheet_vodafone= client.open("vodafone_payments").sheet1
 
-client_ai= ai.OpenAI(api_key=st.secrets["OPENAPI_KEY"])
+client_ai= ai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 def talk_to_agent(chat_input):
     system_prompt= """ You are a helpful payment management assistant. 
