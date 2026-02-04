@@ -18,20 +18,40 @@ sheet_rundfunkt= client_googlesheets.open("rundfunkt_payments").sheet1
 sheet_vodafone= client_googlesheets.open("vodafone_payments").sheet1
 
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-client_ai= genai.GenerativeModel('models/gemini-1.5-flash')
+client_ai = genai.GenerativeModel("gemini-1.5-flash")
 
 def talk_to_agent(chat_input):
-    system_prompt= f""" You are a helpful payment management assistant. 
-             Extract the person's name, paymment category (Rundfunk, Vodafone) from {chat_input}.
-             The Rundfunkt fee is always 2.70 euros per person.(Nihal, Li, Mehru, Alexia,Yazan. and Lennart)
-             Vodafone fee is 64.90 euros per month.(For WIFI, this is only related to Frau Horlacher).
-             Return JSON: 
-             {{"name": "string", "category": "Rundfunk/Vodafone", "month": "string", "valid": true}}
+    system_prompt= f""" 
+    
+    
+    You are a helpful payment management assistant. 
+
+    Extract:
+    -the person's name, 
+    -paymment category (Rundfunk, Vodafone).
+    -month (if Vodafone)
+
+    Rules:
+    - Vodafone is ONLY related to Frau Horlacher
+             
+    Return JSON format : 
+    {{"name": "string",
+      "category": "Rundfunk/Vodafone", 
+      "month": "string", 
+      "valid": true
+      
+      }}
+
+      User input: {chat_input}
                """
-    response= client_ai.generate_content(system_prompt
+    response= client_ai.generate_content(
+       system_prompt,
+       generation_config={
+          "temperature": 0,
+          "response_mime_type":"application/json"
+       }
     )
-    text_response= response.text.replace('```json', '').replace('```', '').strip()
-    return json.loads(text_response)
+    return json.loads(response.text)
 st.set_page_config(page_title="Payment Management App", layout="wide")
 st.title("Payment Management App")
 
@@ -64,9 +84,10 @@ if user_input:
             
             st.success(f"Updated Rundfunk Table for {name}!")
             st.rerun()
-        
+          
          except :
             st.error(f"Hata {name} could not found")
+            st.stop()
 
         elif "Vodafone" in category :
            month= result["month"].capitalize()
@@ -78,11 +99,15 @@ if user_input:
             st.rerun()
            except :
               st.error(f"Hata:{month} could not found")
+              st.stop()
               
-    st.rerun()                 
+    if not result["valid"]:
+       st.warning("I could not figure it out which table to update")
+       st.stop()
+                     
 
-else:
-    st.warning("I could not figure it out which table to update")
+
+    
         
 
 
