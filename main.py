@@ -4,7 +4,7 @@
 import streamlit as st
 import pandas as pd
 import datetime as dt
-import openai as ai
+from google.generativeai import genai 
 import json
 import gspread
 from google.oauth2.service_account import Credentials
@@ -12,31 +12,25 @@ from google.oauth2.service_account import Credentials
 
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
-client = gspread.authorize(creds)
+client_googlesheets= gspread.authorize(creds)
 
-sheet_rundfunkt= client.open("rundfunkt_payments").sheet1
-sheet_vodafone= client.open("vodafone_payments").sheet1
+sheet_rundfunkt= client_googlesheets.open("rundfunkt_payments").sheet1
+sheet_vodafone= client_googlesheets.open("vodafone_payments").sheet1
 
-client_ai= ai.OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+client_ai= genai.GenerativeModel('gemini-1.5-flash')
 
 def talk_to_agent(chat_input):
-    system_prompt= """ You are a helpful payment management assistant. 
-             Extract the person's name, paymment category (Rundfunk, Vodafone).
+    system_prompt= f""" You are a helpful payment management assistant. 
+             Extract the person's name, paymment category (Rundfunk, Vodafone) from {chat_input}.
              The Rundfunkt fee is always 2.70 euros per person.(Nihal, Li, Mehru, Alexia,Yazan. and Lennart)
              Vodafone fee is 64.90 euros per month.(For WIFI, this is only related to Frau Horlacher).
              Return JSON: {"name": "string", "category": "Rundfunk/Vodafone", 
              "month":"string,"valid": true} """
-    response= client_ai.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role":"system","content":system_prompt},
-            {"role":"user","content":chat_input}
-        ,
-        ],
-        response_format={"type":"json_object"}
+    response= client_ai.models.genarate_content(system_prompt
     )
-    return json.loads(response.choices[0].message.content)
-
+    text_response= response.text.replace('```json', '').replace('```', '').strip()
+    return json.loads(text_response)
 st.set_page_config(page_title="Payment Management App", layout="wide")
 st.title("Payment Management App")
 
@@ -59,7 +53,7 @@ if user_input:
     if result["valid"]:
         name= result["name"].capitalize()
         category= result["category"]
-        month= result["month"].capitalize()
+        
 
         if "Rundfunk" in category :
          
@@ -74,6 +68,7 @@ if user_input:
             st.error(f"Hata {name} could not found")
 
         elif "Vodafone" in category :
+           month= result["month"].capitalize()
            try: 
             cell=sheet_vodafone.find(month)
             sheet_vodafone.update_cell(cell.row,2,"Ödendi")
@@ -83,10 +78,7 @@ if user_input:
            except :
               st.error(f"Hata:{month} could not found")
               
-    st.rerun()         
-
-
-        
+    st.rerun()                 
 
 else:
     st.warning("I could not figure it out which table to update")
