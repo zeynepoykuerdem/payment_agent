@@ -20,7 +20,7 @@ sheet_vodafone= client.open("vodafone_payments").sheet1
 
 client = ai.Client(api_key=os.getenv("OPENAPI_KEY"))
 
-def talk_to_agent(message):
+def talk_to_agent(chat_input):
     system_prompt= """ You are a helpful payment management assistant. 
              Extract the person's name, paymment category (  Rundfunkt, Vodafone).
              The Rundfunkt fee is always 2.70 euros per person.(Nihal, Li, Mehru, Alexia,Yazan. and Lennart)
@@ -28,10 +28,10 @@ def talk_to_agent(message):
              Return JSON: {"name": "string", "category": "Rundfunk/Vodafone", 
              "month":"string,"valid": true} """
     response= ai.chat.completions.create(
-        model="gpt-4o-turbo",
+        model="gpt-4o",
         message=[
             {"role":"system","content":system_prompt},
-            {"role":"user","content":message}
+            {"role":"user","content":chat_input}
         ,
         ],
         response_format={"type":"json_object"}
