@@ -3,3 +3,4 @@ pandas
 gspread
 openai
 google_auth
+openpyxl
