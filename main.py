@@ -18,7 +18,7 @@ sheet_rundfunkt= client_googlesheets.open("rundfunkt_payments").sheet1
 sheet_vodafone= client_googlesheets.open("vodafone_payments").sheet1
 
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-client_ai = genai.GenerativeModel("gemini-2.5-pro")
+client_ai = genai.GenerativeModel("gemini-2.5-flash")
 
 def talk_to_agent(chat_input):
     system_prompt= f""" 
