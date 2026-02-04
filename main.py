@@ -80,7 +80,12 @@ if user_input:
          
          try:
             cell=sheet_rundfunkt.find(name,in_column=1)
-            sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
+            cell_status= sheet_rundfunkt.cell(cell.row,2).value
+            if cell_status == "Ödendi":
+               st.info(f"{name} is already marked as Ödendi")
+               st.stop()
+    
+            sheet_rundfunkt.update_cell(cell_status,2,"Ödendi")
             
             st.success(f"Updated Rundfunk Table for {name}!")
             st.rerun()
