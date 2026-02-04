@@ -18,7 +18,7 @@ client = gspread.authorize(creds)
 sheet_rundfunkt= client.open("rundfunkt_payments").sheet1
 sheet_vodafone= client.open("vodafone_payments").sheet1
 
-client = ai.Client(api_key=os.getenv("OPENAPI_KEY"))
+client_ai= ai.Client(api_key=os.getenv("OPENAPI_KEY"))
 
 def talk_to_agent(chat_input):
     system_prompt= """ You are a helpful payment management assistant. 
@@ -27,7 +27,7 @@ def talk_to_agent(chat_input):
              Vodafone fee is 64.90 euros per month.(For WIFI, this is only related to Frau Horlacher).
              Return JSON: {"name": "string", "category": "Rundfunk/Vodafone", 
              "month":"string,"valid": true} """
-    response= ai.chat.completions.create(
+    response= client_ai.chat.completions.create(
         model="gpt-4o",
         message=[
             {"role":"system","content":system_prompt},
