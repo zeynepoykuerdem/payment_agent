@@ -28,7 +28,7 @@ def talk_to_agent(chat_input):
              Return JSON: 
              {{"name": "string", "category": "Rundfunk/Vodafone", "month": "string", "valid": true}}
                """
-    response= client_ai.genarate_content(system_prompt
+    response= client_ai.generate_content(system_prompt
     )
     text_response= response.text.replace('```json', '').replace('```', '').strip()
     return json.loads(text_response)
