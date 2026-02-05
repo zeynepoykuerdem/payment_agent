@@ -80,14 +80,23 @@ if user_input:
          
          try:
             cell=sheet_rundfunkt.find(name,in_column=1)
+            
             cell_status= sheet_rundfunkt.cell(cell.row,2).value
-            if cell_status == "Ödendi":
+
+            if cell_status== "Ödenmedi":
+               sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
+               st.success(f"Updated Rundfunk Table for {name}!")
+               st.stop()
+            elif cell_status == "Ödendi":
                st.info(f"{name} is already marked as Ödendi")
                st.stop()
-    
             sheet_rundfunkt.update_cell(cell.row,2,"Ödendi")
-            
             st.success(f"Updated Rundfunk Table for {name}!")
+
+            # if cell status is Ödendi, but user says otherwise, then change it to Ödenmedi
+            # aylari da girmek lazim
+
+
           
          except :
             st.error(f"Hata {name} could not found")
@@ -103,6 +112,7 @@ if user_input:
                st.stop()
             sheet_vodafone.update_cell(cell.row,2,"Ödendi")
             st.success(f"Updated Vodafone Table for {month}!")
+            st.r
   
            except :
               st.error(f"Hata:{month} could not found")
